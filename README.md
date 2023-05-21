@@ -1,5 +1,8 @@
 # disco-button
 Disco Button built using CircuitPython, Raspberry Pi Pico Ws, and Adafruit IO
+Here's what the builds look like in their current - in progress - state
+https://www.instagram.com/reel/CsfGvRLMZmW/?utm_source=ig_web_copy_link&igshid=MzRlODBiNWFlZA==
+Things are working, but there is some random crashing that I'm trying to get to the bottom of.
 
 More to come...
 
