@@ -1,6 +1,4 @@
 # MQTT Disco Subscriber (lights & speakers) MP3
-# Not quite working - often crashes randomly when attempting to read MP3 files.
-# Crashes aren't clear. Exception often isn't even thrown.
 # Note - I'll eventually put sound & neopixels in separate builds to better manage power, 
 # but am using a single subscriber while I debug.
 import board, time, neopixel, microcontroller, mount_sd
@@ -36,6 +34,8 @@ decoder = MP3Decoder(mp3_file)
 
 # play an mp3 file - pass in string that includes filename extension
 def play_mp3(filename):
+    if audio.playing:
+        audio.stop()
     print(f"About to play {filename}")
     try:
         decoder.file = open(path + filename, "rb")
