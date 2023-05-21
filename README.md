@@ -11,5 +11,9 @@ Note - these are the exact parts (not acurately shown in Frizing, but wiring is:
 - The NeoPixel strip I used has no weatherproof plastic coating & hast 7mm square NeoPixels & 10mm between the LEDs. It may be this one, but also might be some off-brand I bought. Sorry - I don't remember - https://www.adafruit.com/product/1138
 <img width="984" alt="image" src="https://github.com/gallaugher/disco-button/assets/20801687/5735e3d2-8875-48c2-94d6-e2a9a8c0025c">
 
-Here's what the build looks like for the subscriber (but I intend to break this up with audio & neopixels eventually in separate builds):
+Here's what the build looks like for the subscriber (but I intend to break this up with audio & neopixels eventually in separate builds for better power management):
+- Raspberry Pi Pico W
+- Adafruit Micro SD SPI or SDIO Card Breakout Board - 3V ONLY! - https://www.adafruit.com/product/4682
+- Wholesale Dream Color LED String Lights WS2811 RGBIC Addressable Individually Full Color 5V Input IP67 360 Degree Light-emitting - LED space 1.5cm, 5 meters - https://www.aliexpress.us/item/3256804447608449.html?spm=a2g0o.order_list.order_list_main.5.44e71802plBaCq&gatewayAdapt=glo2usa
+- Any speaker with a stanard 3.5 mm plug will do. I'll eventually add a stereo breadboard jack to the build for sturdier input, but this works for now.
 <img width="1578" alt="image" src="https://github.com/gallaugher/disco-button/assets/20801687/350afb99-723a-4d72-bd5f-2091516f42d3">
