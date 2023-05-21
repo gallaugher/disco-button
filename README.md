@@ -12,3 +12,4 @@ Note - these are the exact parts (not acurately shown in Frizing, but wiring is:
 <img width="984" alt="image" src="https://github.com/gallaugher/disco-button/assets/20801687/5735e3d2-8875-48c2-94d6-e2a9a8c0025c">
 
 Here's what the build looks like for the subscriber (but I intend to break this up with audio & neopixels eventually in separate builds):
+<img width="1578" alt="image" src="https://github.com/gallaugher/disco-button/assets/20801687/350afb99-723a-4d72-bd5f-2091516f42d3">
