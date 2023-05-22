@@ -1,0 +1,53 @@
+# Just a test of playing MP3 files when pushing a button
+
+import board, time, microcontroller, mount_sd, digitalio, random, audiomixer, audiocore
+from audiocore import WaveFile
+from audiopwmio import PWMAudioOut as AudioOut
+
+from adafruit_debouncer import Button
+
+# create a debounced Button
+button_input = digitalio.DigitalInOut(board.GP21)
+button_input.switch_to_input(pull=digitalio.Pull.UP) # False when pressed, True when not pressed
+button = Button(button_input)
+
+# setup the speaker
+audio = AudioOut(board.GP15) # assuming speaker plug tip to GP16
+
+# set path where audio files can be found on device
+path = "/sd/disco_songs_wav/"
+
+# song is normally sent over MQTT
+songs = ["Disco Inferno",
+        "Boogie Wonderland",
+        "Play That Funky Music",
+        "Stayin' Alive"]
+
+num_voices = 1 # only playing 1 song at a time
+
+# create Mixer and attach to audio playback
+# IMPORTANT: The "slim_beats" sounds were sampled at low-quality sample_rate=8000 so they could fit on the Pico.
+# If you improve .wav quality, make sure you adjust the sample rate for any new sample rate.
+# This will be changed when using version for microSD card in that lesson.
+mixer = audiomixer.Mixer(voice_count=num_voices, sample_rate=22050, channel_count=1, bits_per_sample=16, samples_signed=True)
+audio.play(mixer)
+
+def play_voice(filename):
+    global path
+    if mixer.voice[0].playing:
+        mixer.voice[0].stop()
+    # read in all beats & simultaneously play them at audio sound .level = 0 (no volume)
+    print(f"About to play: {path+filename}")
+    wave = audiocore.WaveFile(open(path+filename,"rb"))
+    mixer.voice[0].play(wave, loop=False )
+    mixer.voice[0].level = 1.0
+
+while True:
+    button.update()
+    if button.pressed:
+        print("BUTTON PRESSED")
+        song = random.choice(songs)+".wav"
+        play_voice(song)
+    if button.released:
+        print("button released")
+
