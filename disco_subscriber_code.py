@@ -1,5 +1,5 @@
 # MQTT Disco Subscriber (lights & speakers) MP3
-# Note - I'll eventually put sound & neopixels in separate builds to better manage power, 
+# Note - I'll eventually put sound & neopixels in separate builds to better manage power,
 # but am using a single subscriber while I debug.
 import board, time, neopixel, microcontroller, mount_sd
 import os, ssl, socketpool, wifi
@@ -42,7 +42,6 @@ def play_mp3(filename):
         audio.play(decoder)
     except OSError as e:
         print(f"No such file/directory: {path + filename}\nERROR: {e}\nRESTARTING")
-        time.sleep(5.0)
         audio.stop()
     except:
         print("UNKNOWN ERROR - RESTARTING - error while playing sound")
