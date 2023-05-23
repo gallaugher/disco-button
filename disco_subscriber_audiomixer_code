@@ -46,9 +46,8 @@ num_voices = 1 # only playing 1 song at a time
 mixer = audiomixer.Mixer(voice_count=num_voices, sample_rate=16000, channel_count=1, bits_per_sample=16, samples_signed=True)
 audio.play(mixer)
 
-play_voice("disco_stu.wav")
-
 # Setup Neopixel strip & colors
+from rainbowio import colorwheel
 from adafruit_led_animation.color import (
     AMBER, #(255, 100, 0)
     AQUA, # (50, 255, 255)
@@ -95,11 +94,19 @@ rainbow_chase_strip = RainbowChase(strip, speed=0.1, size=3, spacing=1, reverse 
 
 current_animation = "solid"
 
+def roll_lights():
+    block_size = round(strip_num_of_lights / 14)
+    num_of_blocks = int(strip_num_of_lights/block_size)
+
+    for i in range(num_of_blocks):
+        strip[i*block_size:(i*block_size)+block_size] = [colorwheel(i*(256/num_of_blocks))] * block_size
+        strip.show()
+        time.sleep(0.01)
+
 def perform_animation(current_animation):
     if current_animation == "Solid":
         try:
             if mixer.voice[0].playing:
-#                 mixer.voice[0].stop()
                 mixer.stop_voice(0)
         except Exception as e:
             print(f"Problem stopping voice: {e}")
@@ -188,6 +195,8 @@ def message(client, topic, message):
             elif current_animation =="SparklePulse":
                 sparkle_pulse_strip.color = strip_color
             elif current_animation == "Rainbow":
+                print("CALLING roll_lights()")
+                roll_lights()
                 rainbow_strip.animate()
             elif current_animation == "RainbowChase":
                 rainbow_chase_strip.animate()
@@ -231,6 +240,7 @@ mqtt_client.on_message = message
 # Connect to the MQTT broker (adafruit io for us)
 print("Connecting to Adafruit IO...")
 mqtt_client.connect()
+play_voice("disco_stu.wav")
 
 # Tell the dashboard to send the latest settings for these feeds
 # Publishing to a feed with "/get" added to the feed name
