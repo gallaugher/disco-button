@@ -62,11 +62,11 @@ from adafruit_led_animation.animation.solid import Solid
 from adafruit_led_animation.animation.rainbow import Rainbow
 
 # setup colors
+from rainbowio import colorwheel
 from adafruit_led_animation.color import (BLACK, BLUE, GREEN, JADE, MAGENTA, ORANGE, PURPLE, RED, YELLOW, RAINBOW)
 
 INDIGO = (63, 0, 255)
 VIOLET = (127, 0, 255)
-
 colors = [RED, MAGENTA, ORANGE, YELLOW, GREEN, JADE, BLUE, INDIGO, VIOLET, PURPLE, BLACK]
 
 # setup neopixel
@@ -122,6 +122,12 @@ def perform_animation(current_animation):
     elif current_animation == "Rainbow":
         rainbow_strip.animate()
 
+def roll_lights():
+    for i in range(strip_num_of_lights):
+        strip[i] = colorwheel(i * 255/strip_num_of_lights)
+        strip.show()
+        time.sleep(0.01)
+
 animating = False
 
 while True:
@@ -144,7 +150,8 @@ while True:
             print(f"About to publish animation: {current_animation} song {songs[song].split('\n', 1)[0]}")
             mqtt_client.publish(animation, current_animation)
             mqtt_client.publish(disco_song_name, songs[song].split('\n', 1)[0] )
-#         except (ValueError, RuntimeError, MQTT.MMQTTException, BrokenPipeError) as e:
+            if current_animation == "Rainbow":
+                roll_lights()
         except Exception as e:
             print(f"Failed to get data, restarting {e}")
             wifi.radio.connect(os.getenv("WIFI_SSID"), os.getenv("WIFI_PASSWORD"))
