@@ -20,21 +20,6 @@ from adafruit_led_animation.animation.rainbow import Rainbow
 from adafruit_led_animation.animation.rainbowchase import RainbowChase
 from adafruit_led_animation.sequence import AnimationSequence
 
-# setup the speaker
-audio = AudioOut(board.GP15) # assuming speaker plug tip to GP16
-
-# set path where audio files can be found on device
-path = "/sd/disco_songs_wav/"
-
-num_voices = 1 # only playing 1 song at a time
-
-# create Mixer and attach to audio playback
-# IMPORTANT: The "slim_beats" sounds were sampled at low-quality sample_rate=8000 so they could fit on the Pico.
-# If you improve .wav quality, make sure you adjust the sample rate for any new sample rate.
-# This will be changed when using version for microSD card in that lesson.
-mixer = audiomixer.Mixer(voice_count=num_voices, sample_rate=22050, channel_count=1, bits_per_sample=16, samples_signed=True)
-audio.play(mixer)
-
 def play_voice(filename):
     path = "/sd/disco_songs_wav/"
     if mixer.voice[0].playing:
@@ -47,6 +32,21 @@ def play_voice(filename):
         mixer.voice[0].level = 1.0
     except Exception as e:
         print(f"There was a problem playing audio: {e}")
+
+# setup the speaker
+audio = AudioOut(board.GP15) # assuming speaker plug tip to GP16
+
+# set path where audio files can be found on device
+path = "/sd/disco_songs_wav/"
+# create Mixer and attach to audio playback
+# IMPORTANT: The "slim_beats" sounds were sampled at low-quality sample_rate=8000 so they could fit on the Pico.
+# If you improve .wav quality, make sure you adjust the sample rate for any new sample rate.
+# This will be changed when using version for microSD card in that lesson.
+num_voices = 1 # only playing 1 song at a time
+mixer = audiomixer.Mixer(voice_count=num_voices, sample_rate=16000, channel_count=1, bits_per_sample=16, samples_signed=True)
+audio.play(mixer)
+
+play_voice("disco_stu.wav")
 
 # Setup Neopixel strip & colors
 from adafruit_led_animation.color import (
@@ -126,7 +126,10 @@ def perform_animation(current_animation):
         sparkle_pulse_strip.color = strip_color
         sparkle_pulse_strip.animate()
     elif current_animation == "Rainbow":
-        rainbow_strip.animate()
+        try:
+            rainbow_strip.animate()
+        except Exception as e:
+            print(f"ERROR: in rainbow_strip animation: {e}")
     elif current_animation == "RainbowChase":
         rainbow_chase_strip.animate()
 
@@ -238,6 +241,8 @@ while True:
     # keep checking the mqtt message queue
     try:
         mqtt_client.loop()
-    except (ValueError, RuntimeError, MQTT.MMQTTException) as e:
-        print("Failed to get data, retrying\n", e)
-        microcontroller.reset()
+    except Exception as e:
+        print(f"Failed to get data, retrying: {e}")
+        wifi.radio.connect(os.getenv("WIFI_SSID"), os.getenv("WIFI_PASSWORD"))
+        mqtt_client.connect()
+#         microcontroller.reset()
