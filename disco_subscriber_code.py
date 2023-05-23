@@ -1,11 +1,10 @@
-# MQTT Disco Subscriber (lights & speakers) MP3
+# MQTT Disco Subscriber (lights & speakers) mp3
 # Note - I'll eventually put sound & neopixels in separate builds to better manage power,
 # but am using a single subscriber while I debug.
 import board, time, neopixel, microcontroller, mount_sd
 import os, ssl, socketpool, wifi
 import adafruit_minimqtt.adafruit_minimqtt as MQTT
 
-from audiopwmio import PWMAudioOut as AudioOut
 from audiomp3 import MP3Decoder
 
 from adafruit_led_animation.animation.solid import Solid
@@ -21,32 +20,29 @@ from adafruit_led_animation.animation.rainbowchase import RainbowChase
 from adafruit_led_animation.sequence import AnimationSequence
 
 # setup the speaker
+from audiopwmio import PWMAudioOut as AudioOut
 audio = AudioOut(board.GP15) # assuming speaker plug tip to GP16
 
 # set path where audio files can be found on device
-path = "/sd/disco_songs/"
-# path = "/sounds/"
+path = "/sd/disco_songs_mp3/"
 
-# set up the mp3 decoder
-filename = "Boogie Wonderland.mp3"
+filename = "Disco Inferno.mp3"
 mp3_file = open(path + filename, "rb")
 decoder = MP3Decoder(mp3_file)
 
-# play an mp3 file - pass in string that includes filename extension
 def play_mp3(filename):
+    print(f"About to play {path + filename}")
     if audio.playing:
         audio.stop()
-    print(f"About to play {filename}")
     try:
         decoder.file = open(path + filename, "rb")
         audio.play(decoder)
     except OSError as e:
         print(f"No such file/directory: {path + filename}\nERROR: {e}\nRESTARTING")
         audio.stop()
-    except:
-        print("UNKNOWN ERROR - RESTARTING - error while playing sound")
-        time.sleep(5.0)
-        microcontroller.reset()
+    except Exception as e:
+        print(f"Error playing sound: {e}")
+#         microcontroller.reset()
 
 # Setup Neopixel strip & colors
 from adafruit_led_animation.color import (
@@ -97,7 +93,11 @@ current_animation = "solid"
 
 def perform_animation(current_animation):
     if current_animation == "Solid":
-        audio.stop()
+        try:
+            if audio.playing:
+                audio.stop()
+        except Exception as e:
+            print(f"Problem stopping voice: {e}")
         solid_strip.color = strip_color
         solid_strip.animate()
     elif current_animation == "Blink":
@@ -227,15 +227,16 @@ mqtt_client.connect()
 # Tell the dashboard to send the latest settings for these feeds
 # Publishing to a feed with "/get" added to the feed name
 # will send the latest values from that feed.
-mqtt_client.publish(light_color + "/get", "")
-time.sleep(0.5) # delay to try to get light color choice first
-mqtt_client.publish(animation + "/get", "")
 
 while True:
+    if not audio.playing:
+        current_animation = "Solid"
     perform_animation(current_animation)
     # keep checking the mqtt message queue
     try:
         mqtt_client.loop()
     except (ValueError, RuntimeError, MQTT.MMQTTException) as e:
         print("Failed to get data, retrying\n", e)
-        microcontroller.reset()
+        wifi.radio.connect(os.getenv("WIFI_SSID"), os.getenv("WIFI_PASSWORD"))
+        mqtt_client.connect()
+#         microcontroller.reset()
