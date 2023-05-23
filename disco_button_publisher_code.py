@@ -45,10 +45,6 @@ mqtt_client.on_connect = connected
 mqtt_client.on_disconnect = disconnected
 print(f"{aio_username}, {aio_key}, {pool}, {os.getenv("PORT")}, {os.getenv("BROKER")}")
 
-# Setup the "callback" mqtt methods above
-mqtt_client.on_connect = connected
-mqtt_client.on_disconnect = disconnected
-
 # Connect to the MQTT broker (adafruit io for us)
 print("Connecting to Adafruit IO...")
 mqtt_client.connect()
@@ -138,22 +134,24 @@ while True:
     button.update() # get current state of the button
     if button.pressed: # if button has been pressed
         print("BUTTON PRESSED!")
-        led.value = True
         animating = not animating
+        led.value = animating
         if animating:
             current_animation = "Rainbow"
         else:
             current_animation = "Solid"
         try:
+            print(f"About to publish animation: {current_animation} song {songs[song].split('\n', 1)[0]}")
             mqtt_client.publish(animation, current_animation)
             mqtt_client.publish(disco_song_name, songs[song].split('\n', 1)[0] )
 #         except (ValueError, RuntimeError, MQTT.MMQTTException, BrokenPipeError) as e:
         except Exception as e:
             print(f"Failed to get data, restarting {e}")
-            time.sleep(5.0)
-            microcontroller.reset()
+            wifi.radio.connect(os.getenv("WIFI_SSID"), os.getenv("WIFI_PASSWORD"))
+            mqtt_client.connect()
+            print(f"About RETRY to publish animation: {current_animation} song {songs[song].split('\n', 1)[0]}")
+            mqtt_client.publish(animation, current_animation)
+            mqtt_client.publish(disco_song_name, songs[song].split('\n', 1)[0] )
         perform_animation(current_animation)
-    if button.released:
-        led.value = False
     if animating:
         perform_animation(current_animation)
