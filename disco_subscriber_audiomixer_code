@@ -43,7 +43,7 @@ path = "/sd/disco_songs_wav/"
 # If you improve .wav quality, make sure you adjust the sample rate for any new sample rate.
 # This will be changed when using version for microSD card in that lesson.
 num_voices = 1 # only playing 1 song at a time
-mixer = audiomixer.Mixer(voice_count=num_voices, sample_rate=16000, channel_count=1, bits_per_sample=16, samples_signed=True)
+mixer = audiomixer.Mixer(voice_count=num_voices, buffer_size = 4096, sample_rate=22050, channel_count=1, bits_per_sample=16, samples_signed=True)
 audio.play(mixer)
 
 # Setup Neopixel strip & colors
