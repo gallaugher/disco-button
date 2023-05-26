@@ -1,6 +1,6 @@
 # Disco Button - Publisher
 # Doesn't work perfectly. Often gets stuck or throws an exception & needs to restart
-import board, time, neopixel, digitalio, digitalio, math, microcontroller
+import board, time, neopixel, digitalio, math, microcontroller
 from adafruit_debouncer import Button
 import displayio, terminalio, adafruit_displayio_ssd1306
 from adafruit_display_text import label
