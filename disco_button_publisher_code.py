@@ -1,6 +1,6 @@
-# Disco Button - Publisher 
+# Disco Button - Publisher
 # Doesn't work perfectly. Often gets stuck or throws an exception & needs to restart
-import board, time, neopixel, digitalio, digitalio, neopixel, math, microcontroller
+import board, time, neopixel, digitalio, digitalio, math, microcontroller
 from adafruit_debouncer import Button
 import displayio, terminalio, adafruit_displayio_ssd1306
 from adafruit_display_text import label
@@ -63,22 +63,19 @@ from adafruit_led_animation.animation.rainbow import Rainbow
 
 # setup colors
 from rainbowio import colorwheel
-from adafruit_led_animation.color import (BLACK, BLUE, GREEN, JADE, MAGENTA, ORANGE, PURPLE, RED, YELLOW, RAINBOW)
-
-INDIGO = (63, 0, 255)
-VIOLET = (127, 0, 255)
-colors = [RED, MAGENTA, ORANGE, YELLOW, GREEN, JADE, BLUE, INDIGO, VIOLET, PURPLE, BLACK]
+BLACK = (0, 0, 0)
 
 # setup neopixel
 strip_num_of_lights = 54
 strip = neopixel.NeoPixel(board.GP18, strip_num_of_lights)
 strip.fill(BLACK)
+strip.write()
 
 # setup animations
 solid_strip = Solid(strip, color=BLACK)
 rainbow_strip = Rainbow(strip, speed=0.05, period=2)
 
-current_animation = "Solid"
+current_animation = "Solid" 
 
 # Display Setup
 WIDTH = 128
@@ -128,11 +125,10 @@ def roll_lights():
         strip.show()
         time.sleep(0.01)
 
-animating = False
-
 while True:
     if not mqtt_client.is_connected:
-        microcontroller.reset()
+        wifi.radio.connect(os.getenv("WIFI_SSID"), os.getenv("WIFI_PASSWORD"))
+        mqtt_client.connect()
     song = math.floor(potentiometer.value * len(songs)/65536)
     if song != last_song:
         update_display(songs[song])
@@ -140,12 +136,12 @@ while True:
     button.update() # get current state of the button
     if button.pressed: # if button has been pressed
         print("BUTTON PRESSED!")
-        animating = not animating
-        led.value = animating
-        if animating:
-            current_animation = "Rainbow"
-        else:
+        led.value = not led.value # turn on or off LED inside the button
+        if current_animation == "Rainbow":
             current_animation = "Solid"
+            perform_animation(current_animation)
+        else:
+            current_animation = "Rainbow"
         try:
             print(f"About to publish animation: {current_animation} song {songs[song].split('\n', 1)[0]}")
             mqtt_client.publish(animation, current_animation)
@@ -159,6 +155,5 @@ while True:
             print(f"About RETRY to publish animation: {current_animation} song {songs[song].split('\n', 1)[0]}")
             mqtt_client.publish(animation, current_animation)
             mqtt_client.publish(disco_song_name, songs[song].split('\n', 1)[0] )
-        perform_animation(current_animation)
-    if animating:
+    if current_animation == "Rainbow":
         perform_animation(current_animation)
