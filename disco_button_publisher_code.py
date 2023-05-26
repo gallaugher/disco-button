@@ -1,4 +1,4 @@
-# Disco Button - Publisher
+# Disco Button - Publisher 
 # Doesn't work perfectly. Often gets stuck or throws an exception & needs to restart
 import board, time, neopixel, digitalio, digitalio, neopixel, math, microcontroller
 from adafruit_debouncer import Button
