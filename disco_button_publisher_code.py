@@ -75,7 +75,7 @@ strip.write()
 solid_strip = Solid(strip, color=BLACK)
 rainbow_strip = Rainbow(strip, speed=0.05, period=2)
 
-current_animation = "Solid" 
+current_animation = "Solid"
 
 # Display Setup
 WIDTH = 128
@@ -145,8 +145,8 @@ while True:
         try:
             print(f"About to publish animation: {current_animation} song {songs[song].split('\n', 1)[0]}")
             mqtt_client.publish(animation, current_animation)
-            mqtt_client.publish(disco_song_name, songs[song].split('\n', 1)[0] )
             if current_animation == "Rainbow":
+                mqtt_client.publish(disco_song_name, songs[song].split('\n', 1)[0] )
                 roll_lights()
         except Exception as e:
             print(f"Failed to get data, restarting {e}")
