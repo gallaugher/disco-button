@@ -7,7 +7,7 @@ import adafruit_minimqtt.adafruit_minimqtt as MQTT
 # setup the relay
 relay = digitalio.DigitalInOut(board.GP17)
 relay.direction = digitalio.Direction.OUTPUT
-relay.value = False
+relay.value = False # No power through the relay
 
 # Get adafruit io username and key from settings.toml
 aio_username = os.getenv('AIO_USERNAME')
