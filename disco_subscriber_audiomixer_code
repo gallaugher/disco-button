@@ -153,10 +153,6 @@ play_voice("disco_stu.wav")
 while mixer.voice[0].playing:
     pass
 
-# Tell the dashboard to send the latest settings for these feeds
-# Publishing to a feed with "/get" added to the feed name
-# will send the latest values from that feed.
-
 while True:
     if current_animation != "Solid":
         perform_animation(current_animation)
