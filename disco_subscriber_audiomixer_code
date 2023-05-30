@@ -89,6 +89,7 @@ def disconnected(client, userdata, rc):
     print("Disconnected from Adafruit IO!")
 
 def message(client, topic, message):
+    global current_animation
     # The bulk of your code to respond to MQTT will be here, NOT in while True:
     print(f"topic: {topic}, message: {message}")
     if topic == disco_song_name:
@@ -152,6 +153,10 @@ mqtt_client.connect()
 play_voice("disco_stu.wav")
 while mixer.voice[0].playing:
     pass
+
+# Tell the dashboard to send the latest settings for these feeds
+# Publishing to a feed with "/get" added to the feed name
+# will send the latest values from that feed.
 
 while True:
     if current_animation != "Solid":
