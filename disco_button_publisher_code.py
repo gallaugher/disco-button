@@ -125,6 +125,11 @@ def roll_lights():
         strip.show()
         time.sleep(0.01)
 
+# Verify device is connected with a quick roll of lights
+roll_lights()
+strip.fill(BLACK)
+strip.show()
+
 while True:
     if not mqtt_client.is_connected:
         wifi.radio.connect(os.getenv("WIFI_SSID"), os.getenv("WIFI_PASSWORD"))
@@ -154,6 +159,7 @@ while True:
             mqtt_client.connect()
             print(f"About RETRY to publish animation: {current_animation} song {songs[song].split('\n', 1)[0]}")
             mqtt_client.publish(animation, current_animation)
-            mqtt_client.publish(disco_song_name, songs[song].split('\n', 1)[0] )
+            if current_animation == "Rainbow":
+                mqtt_client.publish(disco_song_name, songs[song].split('\n', 1)[0] )
     if current_animation == "Rainbow":
         perform_animation(current_animation)
