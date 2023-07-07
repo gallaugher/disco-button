@@ -2,9 +2,6 @@
 Disco Button built using CircuitPython, Raspberry Pi Pico Ws, and Adafruit IO
 Here's what the builds look like in their current - in progress - state
 https://www.instagram.com/reel/CsfGvRLMZmW/?utm_source=ig_web_copy_link&igshid=MzRlODBiNWFlZA==
-Things are working, but there is some random crashing that I'm trying to get to the bottom of.
-
-More to come...
 
 Here's what the build looks like for the Button:
 Note - these are the exact parts (not acurately shown in Frizing, but wiring is:)
